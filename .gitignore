@@ -1,3 +1,5 @@
+.env.backend
+.env
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
@@ -8,6 +10,7 @@ target/
 .apt_generated
 .classpath
 .factorypath
+.factory/
 .project
 .settings
 .springBeans
@@ -31,3 +34,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Logs ###
+.logs/
+.log
+.claude
+.agent
