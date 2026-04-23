@@ -21,6 +21,7 @@
         <lombok.version>1.18.34</lombok.version>
         <spotless.version>2.43.0</spotless.version>
         <checkstyle.plugin.version>3.5.0</checkstyle.plugin.version>
+        <jacoco.skip>false</jacoco.skip>
     </properties>
 
     <dependencies>
@@ -187,6 +188,29 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <configuration>
+                    <skip>${jacoco.skip}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
