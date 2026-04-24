@@ -42,7 +42,18 @@ public class BaseEntity {
     if (this == o) return true;
     if (o == null) return false;
 
-    // Xử lý trường hợp Hibernate Proxy (Lazy loading)
+    /**
+     * So sánh tính bằng nhau (equality) của hai thực thể dựa trên định danh cơ sở dữ liệu (Database
+     * Identity). *
+     *
+     * <p>Trong môi trường JPA/Hibernate, các thực thể thường được lazy-load dưới dạng các lớp
+     * Proxy. Lớp Proxy này là một subclass động của Entity gốc. Nếu sử dụng {@code o.getClass()}
+     * hoặc {@code instanceof} thông thường, phép so sánh sẽ thất bại do khác biệt về classloader và
+     * hệ thống kiểu (type system). *
+     *
+     * <p>Phương thức này trích xuất lớp persistent class thực sự ẩn dưới Proxy để đảm bảo một
+     * Entity và Proxy của chính nó luôn được đánh giá là bằng nhau nếu có cùng ID.
+     */
     Class<?> oEffectiveClass =
         o instanceof HibernateProxy
             ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
@@ -58,10 +69,23 @@ public class BaseEntity {
     return getId() != null && Objects.equals(getId(), that.getId());
   }
 
+  /**
+   * Tính toán mã băm (hash code) của thực thể. *
+   *
+   * <p>Tuân thủ chặt chẽ nguyên tắc: {@code HashCode} của một đối tượng KHÔNG ĐƯỢC PHÉP thay đổi
+   * trong suốt vòng đời của nó nếu đối tượng đó đang nằm trong các cấu trúc dữ liệu băm (như
+   * HashSet, HashMap). *
+   *
+   * <p>Nếu tính HashCode dựa trên trường {@code id}: Khi một Entity mới được tạo (id = null) và đưa
+   * vào HashSet, sau đó được {@code save()} (Hibernate gán id mới), HashCode sẽ thay đổi. Hệ quả là
+   * Entity đó sẽ bị "thất lạc" trong bucket của HashSet. *
+   *
+   * <p>Việc trả về một hằng số (Class HashCode) ép các cấu trúc dữ liệu băm phải gộp (collide) các
+   * entity vào cùng một bucket và giải quyết việc tìm kiếm thông qua phương thức {@code equals()},
+   * đảm bảo an toàn tuyệt đối cho các thao tác chuyển đổi trạng thái (transient -> persistent).
+   */
   @Override
   public final int hashCode() {
-    // Luôn trả về constant để tránh việc hashCode thay đổi khi ID thay đổi
-    // (trước/sau khi save)
     return this instanceof HibernateProxy
         ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
         : getClass().hashCode();
