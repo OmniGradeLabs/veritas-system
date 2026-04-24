@@ -38,6 +38,7 @@ CREATE TABLE session
     id          UUID      NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id     UUID      NOT NULL,
     refresh_jti UUID      NOT NULL,
+    expires_at  TIMESTAMP NOT NULL,
     revoked_at  TIMESTAMP,
     created_at  TIMESTAMP NOT NULL DEFAULT now(),
     updated_at  TIMESTAMP,
