@@ -123,7 +123,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
       WebRequest request) {
 
     HttpStatus status = HttpStatus.resolve(statusCode.value());
-    if (status == null) status = HttpStatus.INTERNAL_SERVER_ERROR;
+    if (status == null) {
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
 
     ErrorCode ec = mapErrorCode(status);
 
@@ -148,7 +150,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   // Helper lấy path từ WebRequest (format "uri=/...")
   private String extractPath(WebRequest request) {
     String desc = request.getDescription(false);
-    if (desc == null) return null;
+    if (desc == null) {
+      return null;
+    }
     return desc.startsWith("uri=") ? desc.substring(4) : desc;
   }
 

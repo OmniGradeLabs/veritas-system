@@ -77,19 +77,16 @@ public class KafkaConfig {
           ObjectMapper kafkaObjectMapper) {
     Map<String, Object> props = new HashMap<>();
     props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-    props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
-    // Trusted packages: toàn bộ project — không cần update khi thêm event mới
-    props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.veritas.omnigrade.*");
-    props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
     // Offset bắt đầu từ earliest khi consumer group mới join
     props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
     // Tắt auto-commit — dùng MANUAL_IMMEDIATE ở container factory
     props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
+    // Cấu hình JsonDeserializer chỉ qua setter — Spring Kafka 3.3+ không cho phép
+    // mix props map và setter cùng lúc (IllegalStateException).
     var jsonDeserializer = new JsonDeserializer<>(Object.class, kafkaObjectMapper);
     jsonDeserializer.addTrustedPackages("com.veritas.omnigrade.*");
-    jsonDeserializer.setUseTypeMapperForKey(false);
+    jsonDeserializer.setUseTypeHeaders(false);
 
     return new DefaultKafkaConsumerFactory<>(
         props, new StringDeserializer(), new ErrorHandlingDeserializer<>(jsonDeserializer));

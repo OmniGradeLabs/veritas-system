@@ -28,7 +28,9 @@ public abstract class RedisJsonCacheSupport {
   protected Optional<String> readRawValue(String key) {
     try {
       String json = redis.opsForValue().get(key);
-      if (json == null || json.isBlank()) return Optional.empty();
+      if (json == null || json.isBlank()) {
+        return Optional.empty();
+      }
       return Optional.of(json);
     } catch (DataAccessException e) {
       log.warn("Redis read failed for key={}", key, e);
@@ -151,7 +153,9 @@ public abstract class RedisJsonCacheSupport {
         // Khi lô đầy, thực hiện xóa một lần (Pipeline/Multi-key operation)
         if (batch.size() >= batchSize) {
           Long deleted = redis.delete(batch);
-          if (deleted != null) totalDeleted += deleted;
+          if (deleted != null) {
+            totalDeleted += deleted;
+          }
           batch.clear(); // Reset lô để hứng đợt tiếp theo
         }
       }
@@ -159,7 +163,9 @@ public abstract class RedisJsonCacheSupport {
       // Xử lý nốt những khóa còn sót lại trong lô cuối cùng
       if (!batch.isEmpty()) {
         Long deleted = redis.delete(batch);
-        if (deleted != null) totalDeleted += deleted;
+        if (deleted != null) {
+          totalDeleted += deleted;
+        }
       }
     } catch (Exception e) {
       // Không ném Exception làm sập luồng gọi, chỉ log lại.
