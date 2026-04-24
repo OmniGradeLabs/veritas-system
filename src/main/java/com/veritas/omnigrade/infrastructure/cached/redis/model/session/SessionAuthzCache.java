@@ -7,4 +7,8 @@ import java.util.UUID;
 // The roles and permissions are String not Entity for the minimal purpose, less coupling with DB
 // Immutable representation of a user's authorization context for caching. Decouples security
 public record SessionAuthzCache(
-    UUID userId, List<String> roles, List<String> groups, List<String> permissions) {}
+    UUID userId,
+    UUID universityId,
+    List<String> roles,
+    List<String> groups,
+    List<String> permissions) {}

@@ -142,7 +142,7 @@ public abstract class RedisJsonCacheSupport {
     // ta dùng phương thức factory mới của Java 19+ để nó tự tính toán sức chứa hoàn hảo
     // (tức là sức chứa = 1000 / 0.75 ~ 1334) để chứa trọn vẹn 1000 phần tử mà không bị resize
     // lần nào.
-    Set<String> batch = new HashSet<>(batchSize);
+    Set<String> batch = HashSet.newHashSet(batchSize);
     ScanOptions options = ScanOptions.scanOptions().match(pattern).count(batchSize).build();
 
     // Đảm bảo Cursor luôn được đóng để tránh memory leak trên client.
